@@ -1,7 +1,6 @@
 Configuration MyWebServerCOnfiguration {
     # Parameter help description
-    [string]
-    $computername = "$env:COMPUTERNAME"
+    param([string]$computername = "$env:COMPUTERNAME")
     Node $computername {
         WindowsFeature WebServer {
             Ensure = "present"
