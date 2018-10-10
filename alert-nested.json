@@ -1,0 +1,58 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "alertMetric": {
+            "type": "object"
+        },
+        "vmname": {
+            "type": "string"
+        },
+        "actionGroupsId": {
+            "type": "string"
+        },
+        "resource": {
+            "type": "string"
+        }
+    },
+    "resources": [
+        {
+            "copy": {
+                "count": "[length(parameters('alertMetric'))]",
+                "name": "alertloop"
+            },
+            "name": "[concat(parameters('vmname'), '|', parameters('alertMetric')[copyIndex('alertloop')].metricName)]",
+            "type": "Microsoft.Insights/metricAlerts",
+            "location": "global",
+            "apiVersion": "2018-03-01",
+            "properties": {
+                "description": "[parameters('alertMetric')[copyIndex('alertloop')].description]",
+                "severity": "[parameters('alertMetric')[copyIndex('alertloop')].alertSeverity]",
+                "enabled": true,
+                "scopes": [
+                    "[resourceId(parameters('resource'), parameters('vmname'))]"
+                ],
+                "evaluationFrequency": "[concat('PT', string(parameters('alertMetric')[copyIndex('alertloop')].frequency), 'M')]",
+                "windowSize": "[concat('PT', string(parameters('alertMetric')[copyIndex('alertloop')].windowSize), 'M')]",
+                "criteria": {
+                    "odata.type": "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
+                    "allOf": [
+                        {
+                            "name": "1st criterion",
+                            "metricName": "[parameters('alertMetric')[copyIndex('alertloop')].metricName]",
+                            "dimensions": [],
+                            "operator": "[parameters('alertMetric')[copyIndex('alertloop')].operator]",
+                            "threshold": "[parameters('alertMetric')[copyIndex('alertloop')].threshold]",
+                            "timeAggregation": "[parameters('alertMetric')[copyIndex('alertloop')].timeAggregation]"
+                        }
+                    ]
+                },
+                "actions": [
+                    {
+                        "actionGroupId": "[parameters('actionGroupsId')]"
+                    }
+                ]
+            }
+        }
+    ]
+}
