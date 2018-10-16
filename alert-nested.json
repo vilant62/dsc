@@ -15,6 +15,9 @@
             "type": "string"
         }
     },
+    "variables":{
+        "apiVersion":"2018-03-01"
+    },
     "resources": [
         {
             "copy": {
@@ -24,7 +27,7 @@
             "name": "[concat(parameters('vmname'), '|', parameters('alertMetric')[copyIndex('alertloop')].metricName)]",
             "type": "Microsoft.Insights/metricAlerts",
             "location": "global",
-            "apiVersion": "2018-03-01",
+            "apiVersion": "[variables('apiVersion')]",
             "properties": {
                 "description": "[parameters('alertMetric')[copyIndex('alertloop')].alertdescription]",
                 "severity": "[parameters('alertMetric')[copyIndex('alertloop')].alertSeverity]",
