@@ -1,5 +1,6 @@
 Configuration MyWebServerCOnfiguration {
     # Parameter help description
+    #add other comment
     param([string]$computername = "$env:COMPUTERNAME")
     Node $computername {
         WindowsFeature WebServer {
